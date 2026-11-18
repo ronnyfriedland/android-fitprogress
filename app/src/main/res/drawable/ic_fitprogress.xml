@@ -1,0 +1,154 @@
+
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="512dp"
+    android:height="512dp"
+    android:viewportWidth="512"
+    android:viewportHeight="512">
+
+    <!-- Background -->
+    <path
+        android:fillColor="#030503"
+        android:pathData="M0,0 H512 V512 H0 Z"/>
+
+    <!-- Outer green frame -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#39F000"
+        android:strokeWidth="5"
+        android:pathData="M256,15 A241,241 0,1 0 256,497 A241,241 0,1 0 256,15"/>
+
+    <!-- Inner green ring -->
+    <path
+        android:fillColor="#00000000"
+        android:strokeColor="#168B08"
+        android:strokeWidth="5"
+        android:pathData="M256,75 A181,181 0,1 0 256,437 A181,181 0,1 0 256,75"/>
+
+    <!-- Arm silhouette -->
+    <path
+        android:fillColor="#161616"
+        android:strokeColor="#39F000"
+        android:strokeWidth="8"
+        android:strokeLineJoin="round"
+        android:pathData="
+        M323,105
+        C345,88 372,91 391,112
+        L418,146
+        C430,161 427,178 413,193
+        L394,213
+        C408,229 405,247 389,262
+        C371,280 347,273 332,258
+        L313,240
+        C294,258 281,285 276,310
+        C312,299 349,308 377,331
+        C414,361 432,409 419,451
+        C374,479 317,492 261,485
+        C203,479 151,455 113,426
+        C89,408 84,378 98,346
+        C117,299 148,258 189,224
+        L227,173
+        C249,138 282,117 323,105 Z"/>
+
+    <!-- Forearm -->
+    <path
+        android:fillColor="#737373"
+        android:pathData="
+        M106,367
+        C113,313 149,264 195,226
+        L233,177
+        C251,147 282,127 319,116
+        C302,137 298,165 281,193
+        C262,225 236,246 214,270
+        C182,304 162,343 155,381
+        C136,383 119,379 106,367 Z"/>
+
+    <!-- Forearm highlight -->
+    <path
+        android:fillColor="#BDBDBD"
+        android:pathData="
+        M116,351
+        C132,297 166,258 210,223
+        L240,181
+        C257,155 280,139 306,129
+        C287,151 282,176 266,203
+        C244,240 209,262 183,298
+        C153,336 139,366 136,378
+        C126,373 119,364 116,351 Z"/>
+
+    <!-- Biceps -->
+    <path
+        android:fillColor="#858585"
+        android:pathData="
+        M154,382
+        C174,349 207,329 235,320
+        C260,310 278,315 294,331
+        C318,319 349,326 371,346
+        C395,367 409,404 404,435
+        C368,458 323,469 277,464
+        C228,458 183,433 154,405
+        C148,399 148,390 154,382 Z"/>
+
+    <!-- Biceps highlight -->
+    <path
+        android:fillColor="#B5B5B5"
+        android:pathData="
+        M181,386
+        C210,351 246,337 276,340
+        C304,342 326,357 342,379
+        C315,365 287,366 260,376
+        C233,387 211,404 181,410
+        C174,402 176,393 181,386 Z"/>
+
+    <!-- Muscle separation -->
+    <path
+        android:fillColor="#292929"
+        android:pathData="
+        M207,410
+        C238,390 267,384 293,392
+        C319,401 342,413 369,405
+        C344,434 312,442 283,433
+        C255,424 231,415 207,410 Z"/>
+
+    <!-- Fist -->
+    <path
+        android:fillColor="#777777"
+        android:pathData="
+        M315,116
+        C335,106 359,103 374,121
+        L398,151
+        C406,161 401,173 391,183
+        L370,203
+        C358,215 342,211 331,201
+        L312,182
+        C298,163 299,130 315,116 Z"/>
+
+    <!-- Fist highlights -->
+    <path
+        android:fillColor="#C5C5C5"
+        android:pathData="
+        M323,116
+        C342,107 360,112 371,128
+        L391,153
+        C396,160 391,169 384,176
+        L370,188
+        C356,199 341,190 333,177
+        C320,158 315,135 323,116 Z"/>
+
+    <!-- Knuckle details -->
+    <path
+        android:fillColor="#292929"
+        android:pathData="
+        M348,128
+        C358,145 366,161 375,175
+        L361,190
+        C350,176 341,158 336,140 Z"/>
+
+    <path
+        android:fillColor="#292929"
+        android:pathData="
+        M373,128
+        C385,144 392,157 395,166
+        L382,180
+        C374,164 367,149 358,136 Z"/>
+
+</vector>
