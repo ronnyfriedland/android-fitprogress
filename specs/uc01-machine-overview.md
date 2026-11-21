@@ -26,7 +26,8 @@ The user views the main dashboard containing all registered gym machines / equip
    - A `MachineTile` is displayed showing:
      - Machine image if present; otherwise a styled initial letter box.
      - Machine name (single line, ellipsized on overflow).
-     - Latest workout metrics: `"{weight} kg · {reps} {reps_unit}"` (or `no_entries` placeholder).
+     - Latest workout metrics: `"{weight} kg · {reps} {reps_unit} × {rounds} {rounds_unit}"` (or `no_entries` placeholder).
+    - A checkmark badge (`CheckIcon`, Canvas-drawn, accent green `0xFF8BC6A0`) in the top-end corner when the machine has at least one entry dated today.
 5. The user taps a tile to open the detail view (`UC04`).
 6. The user long-presses a tile to initiate machine deletion (`UC03`).
 7. The user taps the floating action button (`+`) to add a new machine (`UC02`).
@@ -45,6 +46,8 @@ The user views the main dashboard containing all registered gym machines / equip
 - [ ] If no machines exist, the user clearly sees the empty state message.
 - [ ] Equipment tiles load thumbnail images efficiently without blocking UI rendering.
 - [ ] When an image is missing, the tile displays the first character of the machine name in uppercase on a dark surface background.
-- [ ] The latest workout stats reflect the entry with the most recent date.
+- [ ] The latest workout stats reflect the entry with the most recent date, including repetitions and rounds.
+- [ ] A machine trained today displays a checkmark badge on its tile; machines not trained today show no badge.
+- [ ] The badge uses the same Canvas-drawn vector style and accent color as the app's other custom icons.
 - [ ] Tapping a card opens the correct machine detail screen.
 - [ ] Long-pressing triggers the deletion confirmation dialog.

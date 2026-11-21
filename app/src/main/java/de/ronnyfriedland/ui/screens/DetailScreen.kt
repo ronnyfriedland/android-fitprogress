@@ -1,7 +1,16 @@
 package de.ronnyfriedland.ui.screens
 
+import android.app.Activity
+import android.content.Intent
+import android.graphics.Bitmap
 import androidx.activity.compose.BackHandler
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.contract.ActivityResultContracts
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.gestures.detectHorizontalDragGestures
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -12,11 +21,16 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import de.ronnyfriedland.data.ImageStorage
 import de.ronnyfriedland.model.Entry
 import de.ronnyfriedland.model.Machine
 import de.ronnyfriedland.ui.components.ChartCard
@@ -28,6 +42,7 @@ import de.ronnyfriedland.ui.util.localized
 import de.ronnyfriedland.ui.util.parseDate
 
 /** Detail screen for a machine showing latest entry, progress chart, and history list. */
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun DetailScreen(
     machine: Machine,
@@ -36,9 +51,37 @@ fun DetailScreen(
     onAdd: () -> Unit,
     onChart: () -> Unit,
     showChart: Boolean,
-    onDeleteEntry: (Entry) -> Unit
+    onDeleteEntry: (Entry) -> Unit,
+    onChangeImage: (String) -> Unit
 ) {
     val context = LocalContext.current
+    var showImageFullscreen by remember { mutableStateOf(false) }
+    val machineImage = remember(machine.image) { ImageStorage.loadImageBitmap(machine.image) }
+
+    // Launcher for camera and gallery image chooser (long-press on machine image)
+    val imageChooserLauncher = rememberLauncherForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            val data = result.data
+            val uri = data?.data
+            val path = if (uri != null) {
+                ImageStorage.copyImageToAppStorage(context, uri)
+            } else {
+                @Suppress("DEPRECATION")
+                val bitmap = data?.extras?.get("data") as? Bitmap
+                if (bitmap != null) ImageStorage.saveBitmapToAppStorage(context, bitmap) else ""
+            }
+            if (path.isNotBlank()) onChangeImage(path)
+        }
+    }
+
+    fun launchImageChooser() {
+        val galleryIntent = Intent(Intent.ACTION_GET_CONTENT).apply { type = "image/*" }
+        val cameraIntent = Intent("android.media.action.IMAGE_CAPTURE")
+        val chooser = Intent.createChooser(galleryIntent, null).apply {
+            putExtra(Intent.EXTRA_INITIAL_INTENTS, arrayOf(cameraIntent))
+        }
+        imageChooserLauncher.launch(chooser)
+    }
 
     // Android standard back gesture handling (edge swipe / predictive back)
     BackHandler(onBack = onBack)
@@ -79,6 +122,21 @@ fun DetailScreen(
             ) {
                 Spacer(Modifier.height(20.dp))
                 Text(machine.name, color = TextMain, fontSize = 28.sp, fontWeight = FontWeight.Bold)
+                if (machineImage != null) {
+                    Image(
+                        machineImage.asImageBitmap(),
+                        contentDescription = machine.name,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 14.dp)
+                            .height(180.dp)
+                            .combinedClickable(
+                                onClick = { showImageFullscreen = true },
+                                onLongClick = { launchImageChooser() }
+                            )
+                    )
+                }
                 val latest = entries.maxByOrNull { parseDate(it.date) }
                 Card(
                     Modifier.fillMaxWidth().padding(top = 16.dp),
@@ -91,7 +149,7 @@ fun DetailScreen(
                             Text(latest.date, color = Muted, fontSize = 13.sp)
                             Row(Modifier.fillMaxWidth().padding(top = 12.dp), horizontalArrangement = Arrangement.spacedBy(30.dp)) {
                                 Metric(localized(context, "weight"), "${fmt(latest.weight)} kg")
-                                Metric(localized(context, "repetitions"), "${latest.reps}")
+                                Metric(localized(context, "repetitions"), "${latest.reps} ${localized(context, "reps_unit")} × ${latest.rounds} ${localized(context, "rounds_unit")}")
                             }
                         } else {
                             Text(localized(context, "no_training_data"), color = Muted, modifier = Modifier.padding(top = 8.dp))
@@ -152,7 +210,7 @@ fun DetailScreen(
                                         Text(entry.date, color = TextMain, fontWeight = FontWeight.SemiBold)
                                         Text("${fmt(entry.weight)} kg", color = Color(0xFF8BC6A0), fontSize = 13.sp)
                                     }
-                                    Text("${entry.reps} ${localized(context, "reps_unit")}", color = TextMain, fontWeight = FontWeight.Bold)
+                                    Text("${entry.reps} ${localized(context, "reps_unit")} × ${entry.rounds} ${localized(context, "rounds_unit")}", color = TextMain, fontWeight = FontWeight.Bold)
                                 }
                             }
                             if (revealDelete) {
@@ -172,6 +230,29 @@ fun DetailScreen(
                         }
                     }
                 }
+            }
+        }
+    }
+
+    // Fullscreen image modal: tap anywhere to dismiss
+    if (showImageFullscreen && machineImage != null) {
+        Dialog(
+            onDismissRequest = { showImageFullscreen = false },
+            properties = DialogProperties(usePlatformDefaultWidth = false)
+        ) {
+            Box(
+                Modifier
+                    .fillMaxSize()
+                    .background(Bg)
+                    .clickable { showImageFullscreen = false },
+                contentAlignment = Alignment.Center
+            ) {
+                Image(
+                    machineImage.asImageBitmap(),
+                    contentDescription = machine.name,
+                    contentScale = ContentScale.Fit,
+                    modifier = Modifier.fillMaxSize()
+                )
             }
         }
     }

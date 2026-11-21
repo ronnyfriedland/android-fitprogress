@@ -32,6 +32,7 @@ import java.util.Locale
 fun OverviewScreen(
     machines: List<Machine>,
     getLatestEntry: (Long) -> Entry?,
+    trainedToday: (Long) -> Boolean,
     onOpen: (Long) -> Unit,
     onAdd: () -> Unit,
     onLongPressMachine: (Machine) -> Unit
@@ -79,6 +80,7 @@ fun OverviewScreen(
                         MachineTile(
                             machine = machine,
                             latestEntry = getLatestEntry(machine.id),
+                            trainedToday = trainedToday(machine.id),
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .combinedClickable(

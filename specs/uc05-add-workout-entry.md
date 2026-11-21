@@ -1,7 +1,7 @@
 # UC05: Add Workout Entry
 
 ## 1. Description
-The user logs a completed exercise set on the currently selected machine, recording the weight in kilograms and the number of repetitions. Incomplete or invalid fields are visually highlighted with red borders and localized error labels, identical to the machine creation dialog.
+The user logs a completed exercise set on the currently selected machine, recording the weight in kilograms, the number of repetitions, and optionally the number of rounds. Incomplete or invalid fields are visually highlighted with red borders and localized error labels, identical to the machine creation dialog.
 
 ---
 
@@ -22,21 +22,24 @@ The user logs a completed exercise set on the currently selected machine, record
    - Static date line: Prefilled with current system date in `dd.MM.yyyy` format.
    - Outlined text field for **Weight (kg)** with decimal numeric keyboard.
    - Outlined text field for **Repetitions** with integer numeric keyboard.
+   - Outlined text field for **Rounds** with integer numeric keyboard (optional, defaults to 1).
    - Cancel and Save buttons.
-3. The user inputs weight (supports both comma `,` and period `.` decimal separators) and integer repetitions.
+3. The user inputs weight (supports both comma `,` and period `.` decimal separators), integer repetitions, and optionally rounds.
 4. The user taps "Save".
 5. The system validates:
    - Weight is a valid positive non-negative number (`>= 0`).
    - Repetitions is a valid positive non-negative integer (`>= 0`).
+   - Rounds is either empty (treated as `1`) or a valid integer `>= 1`; non-numeric or `< 1` input is rejected.
 6. If any field is invalid or missing:
    - Sets `isError = true` on the invalid field(s).
    - Displays supporting error text in warning color (`0xFFFF8A80`):
      - For weight: `please_weight` ("Please enter a valid weight.").
      - For repetitions: `please_reps` ("Please enter repetitions.").
+     - For rounds: `please_rounds` ("Please enter the rounds.").
    - Typing into an error-flagged field clears the error state immediately.
    - The dialog remains open.
-7. If both fields are valid:
-   - System calls `EntryRepository.addEntry(machineId, Entry(date, weight, reps))`.
+7. If all fields are valid:
+   - System calls `EntryRepository.addEntry(machineId, Entry(date, weight, reps, rounds))`.
    - Dialog closes.
    - Detail screen history list, latest stats card, and chart instantly update.
 
@@ -52,5 +55,7 @@ The user logs a completed exercise set on the currently selected machine, record
 - [ ] Both German comma (`75,5`) and standard dot (`75.5`) decimal formats are correctly parsed.
 - [ ] Empty or invalid fields are highlighted with red outlines and clear localized supporting error text.
 - [ ] Error highlighting matches the visual style and behavior of `MachineDialog`.
-- [ ] Entries are persisted immediately to local storage via `EntryRepository`.
+- [ ] Entries are persisted immediately to local storage via `EntryRepository`, including the rounds value.
+- [ ] Entries stored before the rounds feature load with `rounds = 1`.
+- [ ] Empty rounds input defaults to `1`; values `< 1` or non-numeric input show a validation error.
 - [ ] New entries are automatically sorted into the chronological position in the history list.

@@ -1,7 +1,7 @@
 # UC07: Progress Chart
 
 ## 1. Description
-The user toggles a visual bar chart on the detail screen to observe recent performance trends. The chart renders dual vertical bars per workout session: one for weight (kg) and one for repetitions, dynamically scaled relative to the maximum values in the viewed window.
+The user toggles a visual bar chart on the detail screen to observe recent performance trends. The chart renders a single vertical bar per day, where the value is the total training volume computed as `weight × reps × rounds` summed over all entries of that day. Bars are dynamically scaled relative to the maximum value in the viewed window.
 
 ---
 
@@ -21,15 +21,14 @@ The user toggles a visual bar chart on the detail screen to observe recent perfo
    - If chart is visible: displays localized text `hide_chart` ("Hide chart").
 2. The user taps the button to toggle chart visibility.
 3. When shown:
-   - The system retrieves the workout entries, sorts them chronologically (oldest to newest), and selects the **last 8 entries** (`takeLast(8)`).
+   - The system retrieves the workout entries, sorts them chronologically (oldest to newest), and selects the **last 10 entries** (`takeLast(10)`).
+   - For each entry, the daily value is computed as `weight × reps × rounds` (see `UC05`).
+   - Entries sharing the same date are aggregated into a single value per day (summed).
    - Renders `ChartCard`:
-     - Card title: localized `chart_title` ("WEIGHT & REPETITIONS").
-     - Legend row:
-       - Green square indicator: `chart_weight` ("■ Weight (kg)").
-       - Gray square indicator: `chart_reps` ("■ Repetitions").
+     - Card title: localized `chart_title`.
      - **Canvas View:**
-       - Computes `maxW = max(weight)` and `maxR = max(reps)` to scale bar heights independently up to 78% of the canvas height.
-       - Renders side-by-side rectangles: green bar for weight, gray bar for reps.
+       - Computes `maxValue = max(daily volume)` to scale bar heights up to 78% of the canvas height.
+       - Renders one bar per day, ordered chronologically from left to right.
      - Footnote: localized `chart_scale_note` explaining relative normalization.
 4. The user can tap the toggle button again to collapse the chart and free up vertical screen space.
 
@@ -37,6 +36,8 @@ The user toggles a visual bar chart on the detail screen to observe recent perfo
 
 ## 5. Acceptance Criteria
 - [ ] Chart toggle button text updates dynamically between show and hide states.
-- [ ] Chart displays up to the last 8 entries in chronological order from left to right.
-- [ ] Weight and repetition bars are drawn side-by-side with distinct colors (Green `#8BC6A0` vs Gray `#B4C3BC`).
-- [ ] Chart scales gracefully regardless of differences in magnitude between weight (e.g. 120 kg) and repetitions (e.g. 10).
+- [ ] Chart displays up to the last 10 entries, aggregated to one bar per day.
+- [ ] Each bar's value equals `weight × reps × rounds` (summed per day when multiple entries exist).
+- [ ] Bars are scaled relative to the maximum daily value in the displayed window.
+- [ ] Days are ordered chronologically from left to right.
+- [ ] Single-series legend/label reflects the volume metric (localized keys updated accordingly).

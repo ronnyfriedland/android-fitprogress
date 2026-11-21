@@ -54,6 +54,10 @@ fun FitProgressApp(
                 OverviewScreen(
                     machines = machines,
                     getLatestEntry = { machineId -> entryRepository.getLatestEntry(machineId) },
+                    trainedToday = { machineId ->
+                        val today = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
+                        entryRepository.getEntries(machineId).any { it.date == today }
+                    },
                     onOpen = { selectedId = it },
                     onAdd = { showMachineDialog = true },
                     onLongPressMachine = { machinePendingDelete = it }
@@ -68,6 +72,9 @@ fun FitProgressApp(
                     showChart = showChart,
                     onDeleteEntry = { entry ->
                         entriesForSelected = entryRepository.deleteEntry(selected.id, entry)
+                    },
+                    onChangeImage = { path ->
+                        machines = machineRepository.updateMachineImage(selected.id, path)
                     }
                 )
             }
@@ -106,9 +113,9 @@ fun FitProgressApp(
     }
 
     if (showEntryDialog && selected != null) {
-        EntryDialog(context = context, onDismiss = { showEntryDialog = false }) { weight, reps ->
+        EntryDialog(context = context, onDismiss = { showEntryDialog = false }) { weight, reps, rounds ->
             val date = SimpleDateFormat("dd.MM.yyyy", Locale.getDefault()).format(Date())
-            entriesForSelected = entryRepository.addEntry(selected.id, Entry(date, weight, reps))
+            entriesForSelected = entryRepository.addEntry(selected.id, Entry(date, weight, reps, rounds))
             showEntryDialog = false
         }
     }

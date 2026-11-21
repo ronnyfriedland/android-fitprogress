@@ -1,7 +1,7 @@
 # UC04: Machine Details
 
 ## 1. Description
-The user views the comprehensive detail view of a selected machine. Navigation back to the overview is performed via swipe gesture (aligned with Android 17 gesture navigation standards) rather than a text link. The screen presents the equipment name, a prominent summary card of the latest workout record, a toggleable progress chart, and the chronological history of all recorded training sets.
+The user views the comprehensive detail view of a selected machine. Navigation back to the overview is performed via swipe gesture (aligned with Android 17 gesture navigation standards) rather than a text link. The screen presents the equipment name, the machine photo (with fullscreen modal viewer), a prominent summary card of the latest workout record, a toggleable progress chart, and the chronological history of all recorded training sets.
 
 ---
 
@@ -23,15 +23,16 @@ The user views the comprehensive detail view of a selected machine. Navigation b
      - Android system back swipe gesture (predictive back / edge swipe handled via `BackHandler`).
      - Screen horizontal swipe-right gesture on the upper header area.
    - **Title:** Equipment name in prominent 28 sp bold text.
+   - **Machine Image:** If the machine has an assigned image, it is rendered below the title (full width, ~180 dp height, cropped). Tapping it opens a fullscreen modal dialog (`usePlatformDefaultWidth = false`) showing the image fitted to the screen (`ContentScale.Fit`) on the dark `Bg` background; tapping anywhere on the modal or the system back gesture dismisses it.
    - **Latest Performance Card:**
      - Header: `last_entry`.
      - Date of the most recent workout set.
-     - Metrics: Two large figures showing `weight` (with "kg") and `repetitions`.
+     - Metrics: Two large figures showing `weight` (with "kg") and `repetitions` displayed together with `rounds` (e.g. `"12 reps × 3 rounds"`).
      - If no entries exist: Displays `no_training_data`.
    - **Chart Toggle Button:** Allows displaying or hiding the visual progress chart (`UC07`).
    - **History Section:**
      - Header: `history`.
-     - Reverse-chronological list of workout entries showing date, weight in kg, and repetitions.
+     - Reverse-chronological list of workout entries showing date, weight in kg, and repetitions together with rounds.
      - If no entries exist: Displays placeholder text (`entries_here`).
 4. The user can tap the Floating Action Button (`+`) to add a new workout entry (`UC05`).
 5. The user can swipe any history row to reveal the delete action (`UC06`).
@@ -46,3 +47,7 @@ The user views the comprehensive detail view of a selected machine. Navigation b
 - [ ] The "Latest Entry" card automatically reflects the highest date entry.
 - [ ] History list is sorted in descending chronological order (newest on top).
 - [ ] Number formatting adheres to locale standards (e.g., German decimal comma).
+- [ ] The machine image is shown on the detail screen when an image exists; machines without an image show no broken image area.
+- [ ] Tapping the image opens a fullscreen modal; tapping anywhere on the modal dismisses it, and the system back gesture closes the modal before navigating back.
+- [ ] Long-pressing the image opens the image chooser; selecting a new photo updates the machine image on the detail screen and persists it.
+- [ ] Repetitions are always displayed together with rounds in the latest card and history list.

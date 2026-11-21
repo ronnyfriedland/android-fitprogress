@@ -21,13 +21,13 @@ The application follows clean architectural separation between Domain Models, Da
 
 | Document | Topic | Description |
 | :--- | :--- | :--- |
-| [UC01: Machine Overview](uc01-machine-overview.md) | Equipment Management | Grid view of equipment with thumbnails, stats, and add action. |
+| [UC01: Machine Overview](uc01-machine-overview.md) | Equipment Management | Grid view of equipment with thumbnails, stats, daily checkmark badge, and add action. |
 | [UC02: Add Machine](uc02-add-machine.md) | Equipment Management | Creating equipment with name validation and optional photo. |
 | [UC03: Delete Machine](uc03-delete-machine.md) | Equipment Management | Removing equipment via long-press and cascading data deletion. |
-| [UC04: Machine Details](uc04-machine-details.md) | Workout Tracking | Equipment detail view, latest metrics, and chronological history. |
-| [UC05: Add Workout Entry](uc05-add-workout-entry.md) | Workout Tracking | Logging workout set with weight and repetition validation. |
+| [UC04: Machine Details](uc04-machine-details.md) | Workout Tracking | Equipment detail view with photo viewer, latest metrics (incl. rounds), and chronological history. |
+| [UC05: Add Workout Entry](uc05-add-workout-entry.md) | Workout Tracking | Logging workout set with weight, repetitions, and rounds validation. |
 | [UC06: Delete Workout Entry](uc06-delete-workout-entry.md) | Workout Tracking | Gesture-based swipe-to-reveal removal of single entries. |
-| [UC07: Progress Chart](uc07-progress-chart.md) | Visual Analytics | Canvas dual-bar chart showing recent weight & repetition trends. |
+| [UC07: Progress Chart](uc07-progress-chart.md) | Visual Analytics | Single daily volume bar (weight × reps × rounds), last 10 entries. |
 | [UC08: Localization & i18n](uc08-localization-i18n.md) | Core Services | Locale detection for DE, EN, ES with automatic English fallback. |
 | [UC09: Data Persistence](uc09-data-persistence.md) | Core Services | Repository pattern, SharedPreferences JSON, and data migration. |
 | [UC10: Image Storage](uc10-image-storage.md) | Core Services | Internal file system image saving, URI stream copy, and decoding. |

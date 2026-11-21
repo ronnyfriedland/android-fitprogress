@@ -41,3 +41,24 @@ fun TrashIcon(modifier: Modifier = Modifier, color: Color = Color.White) {
         drawLine(color, Offset(w * 0.58f, h * 0.38f), Offset(w * 0.58f, h * 0.76f), strokeWidth = w * 0.055f)
     }
 }
+
+/** Custom vector checkmark icon drawn on Canvas. */
+@Composable
+fun CheckIcon(modifier: Modifier = Modifier, color: Color = Color(0xFF8BC6A0)) {
+    Canvas(modifier) {
+        val w = size.width
+        val h = size.height
+        drawLine(
+            color,
+            Offset(w * 0.18f, h * 0.52f),
+            Offset(w * 0.42f, h * 0.76f),
+            strokeWidth = w * 0.11f
+        )
+        drawLine(
+            color,
+            Offset(w * 0.42f, h * 0.76f),
+            Offset(w * 0.84f, h * 0.24f),
+            strokeWidth = w * 0.11f
+        )
+    }
+}

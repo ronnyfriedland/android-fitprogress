@@ -76,7 +76,7 @@ class SharedPreferencesEntryRepository(context: Context) : EntryRepository {
     private fun saveEntries(machineId: Long, entries: List<Entry>) {
         val array = JSONArray()
         entries.forEach { e ->
-            array.put(JSONObject().put("date", e.date).put("weight", e.weight).put("reps", e.reps))
+            array.put(JSONObject().put("date", e.date).put("weight", e.weight).put("reps", e.reps).put("rounds", e.rounds))
         }
         prefs.edit {
             putString(keyForMachine(machineId), array.toString())
@@ -88,7 +88,7 @@ class SharedPreferencesEntryRepository(context: Context) : EntryRepository {
             val array = JSONArray(raw)
             (0 until array.length()).map { i ->
                 val obj = array.getJSONObject(i)
-                Entry(obj.optString("date"), obj.optDouble("weight"), obj.optInt("reps"))
+                Entry(obj.optString("date"), obj.optDouble("weight"), obj.optInt("reps"), obj.optInt("rounds", 1).coerceAtLeast(1))
             }.sortedByDescending { parseDate(it.date) }
         } catch (_: Exception) {
             emptyList()
@@ -105,7 +105,7 @@ class SharedPreferencesEntryRepository(context: Context) : EntryRepository {
                     val arr = obj.optJSONArray("entries") ?: return emptyList()
                     return (0 until arr.length()).map { j ->
                         val e = arr.getJSONObject(j)
-                        Entry(e.optString("date"), e.optDouble("weight"), e.optInt("reps"))
+                        Entry(e.optString("date"), e.optDouble("weight"), e.optInt("reps"), e.optInt("rounds", 1).coerceAtLeast(1))
                     }.sortedByDescending { parseDate(it.date) }
                 }
             }

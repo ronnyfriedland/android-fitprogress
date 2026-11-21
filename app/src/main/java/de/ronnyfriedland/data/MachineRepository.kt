@@ -21,6 +21,9 @@ interface MachineRepository {
 
     /** Deletes a machine by id, returning the updated list. */
     fun deleteMachine(id: Long): List<Machine>
+
+    /** Updates the image path of a machine, returning the updated list. */
+    fun updateMachineImage(id: Long, image: String): List<Machine>
 }
 
 /**
@@ -60,6 +63,12 @@ class SharedPreferencesMachineRepository(context: Context) : MachineRepository {
 
     override fun deleteMachine(id: Long): List<Machine> {
         val updated = getMachines().filterNot { it.id == id }
+        saveMachines(updated)
+        return updated
+    }
+
+    override fun updateMachineImage(id: Long, image: String): List<Machine> {
+        val updated = getMachines().map { if (it.id == id) it.copy(image = image) else it }
         saveMachines(updated)
         return updated
     }

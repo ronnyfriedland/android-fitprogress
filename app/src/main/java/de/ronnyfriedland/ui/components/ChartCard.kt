@@ -21,11 +21,17 @@ import de.ronnyfriedland.ui.theme.Surface
 import de.ronnyfriedland.ui.util.localized
 import de.ronnyfriedland.ui.util.parseDate
 
-/** Bar chart visualizing recent weight and repetition progression. */
+/** Bar chart visualizing daily training volume (weight × reps × rounds) for recent entries. */
 @Composable
 fun ChartCard(entries: List<Entry>) {
     val context = LocalContext.current
-    val ordered = entries.sortedBy { parseDate(it.date) }.takeLast(8)
+    val dailyVolumes = entries
+        .sortedBy { parseDate(it.date) }
+        .takeLast(10)
+        .groupBy { it.date }
+        .map { (_, dayEntries) ->
+            dayEntries.sumOf { it.weight * it.reps * it.rounds }
+        }
     Card(
         Modifier.fillMaxWidth().padding(top = 10.dp),
         colors = CardDefaults.cardColors(containerColor = Surface),
@@ -33,23 +39,16 @@ fun ChartCard(entries: List<Entry>) {
     ) {
         Column(Modifier.padding(12.dp)) {
             Text(localized(context, "chart_title"), color = Muted, fontSize = 11.sp, fontWeight = FontWeight.Bold)
-            Row(horizontalArrangement = Arrangement.spacedBy(16.dp), modifier = Modifier.padding(vertical = 8.dp)) {
-                Text(localized(context, "chart_weight"), color = Color(0xFF8BC6A0), fontSize = 11.sp)
-                Text(localized(context, "chart_reps"), color = Color(0xFFB4C3BC), fontSize = 11.sp)
-            }
             Canvas(Modifier.fillMaxWidth().height(150.dp)) {
-                val n = ordered.size
+                val n = dailyVolumes.size
                 if (n == 0) return@Canvas
-                val maxW = (ordered.maxOf { it.weight }.toFloat()).coerceAtLeast(1f)
-                val maxR = (ordered.maxOf { it.reps }.toFloat()).coerceAtLeast(1f)
+                val maxV = dailyVolumes.max().toFloat().coerceAtLeast(1f)
                 val group = size.width / n
-                val barW = (group * 0.25f).coerceAtLeast(5f)
-                ordered.forEachIndexed { i, e ->
-                    val x = group * i + group * 0.25f
-                    val h1 = size.height * 0.78f * (e.weight.toFloat() / maxW)
-                    val h2 = size.height * 0.78f * (e.reps.toFloat() / maxR)
-                    drawRect(Color(0xFF8BC6A0), Offset(x, size.height - h1), Size(barW, h1))
-                    drawRect(Color(0xFFB4C3BC), Offset(x + barW + 3, size.height - h2), Size(barW, h2))
+                val barW = (group * 0.5f).coerceAtLeast(5f)
+                dailyVolumes.forEachIndexed { i, volume ->
+                    val x = group * i + (group - barW) / 2
+                    val h = size.height * 0.78f * (volume.toFloat() / maxV)
+                    drawRect(Color(0xFF8BC6A0), Offset(x, size.height - h), Size(barW, h))
                 }
             }
             Text(localized(context, "chart_scale_note"), color = Muted, fontSize = 10.sp)

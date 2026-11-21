@@ -23,11 +23,13 @@ import java.util.Locale
 
 /** Dialog for recording a new training entry (weight in kg and repetitions). */
 @Composable
-fun EntryDialog(context: Context, onDismiss: () -> Unit, onSave: (Double, Int) -> Unit) {
+fun EntryDialog(context: Context, onDismiss: () -> Unit, onSave: (Double, Int, Int) -> Unit) {
     var weight by remember { mutableStateOf("") }
     var reps by remember { mutableStateOf("") }
+    var rounds by remember { mutableStateOf("") }
     var weightError by remember { mutableStateOf(false) }
     var repsError by remember { mutableStateOf(false) }
+    var roundsError by remember { mutableStateOf(false) }
 
     AlertDialog(
         onDismissRequest = onDismiss,
@@ -73,20 +75,40 @@ fun EntryDialog(context: Context, onDismiss: () -> Unit, onSave: (Double, Int) -
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                     colors = readableFieldColors()
                 )
+                OutlinedTextField(
+                    value = rounds,
+                    onValueChange = {
+                        rounds = it
+                        roundsError = false
+                    },
+                    label = { Text(localized(context, "rounds"), color = TextMain) },
+                    singleLine = true,
+                    isError = roundsError,
+                    supportingText = {
+                        if (roundsError) {
+                            Text(localized(context, "please_rounds"), color = Color(0xFFFF8A80))
+                        }
+                    },
+                    keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+                    colors = readableFieldColors()
+                )
             }
         },
         confirmButton = {
             TextButton(onClick = {
                 val w = weight.replace(',', '.').toDoubleOrNull()
                 val r = reps.toIntOrNull()
+                val ro = rounds.toIntOrNull()
                 val isWeightValid = w != null && w >= 0
                 val isRepsValid = r != null && r >= 0
+                val isRoundsValid = rounds.isBlank() || (ro != null && ro >= 1)
 
                 weightError = !isWeightValid
                 repsError = !isRepsValid
+                roundsError = !isRoundsValid
 
-                if (w != null && w >= 0 && r != null && r >= 0) {
-                    onSave(w, r)
+                if (w != null && w >= 0 && r != null && r >= 0 && isRoundsValid) {
+                    onSave(w, r, (ro ?: 1).coerceAtLeast(1))
                 }
             }) {
                 Text(localized(context, "save"), color = Color(0xFF8BC6A0))

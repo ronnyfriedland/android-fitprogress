@@ -33,11 +33,13 @@ import de.ronnyfriedland.ui.util.localized
 fun MachineTile(
     machine: Machine,
     latestEntry: Entry? = null,
+    trainedToday: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val context = LocalContext.current
     val bitmap = remember(machine.image) { ImageStorage.loadImageBitmap(machine.image) }
-    Card(modifier, colors = CardDefaults.cardColors(containerColor = Surface), shape = RoundedCornerShape(18.dp)) {
+    Box(modifier) {
+        Card(Modifier.fillMaxSize(), colors = CardDefaults.cardColors(containerColor = Surface), shape = RoundedCornerShape(18.dp)) {
         Column(Modifier.padding(12.dp)) {
             if (bitmap != null) {
                 Image(
@@ -57,13 +59,22 @@ fun MachineTile(
             Text(machine.name, color = TextMain, fontWeight = FontWeight.SemiBold, maxLines = 1)
             if (latestEntry != null) {
                 Text(
-                    "${fmt(latestEntry.weight)} kg · ${latestEntry.reps} ${localized(context, "reps_unit")}",
+                    "${fmt(latestEntry.weight)} kg · ${latestEntry.reps} ${localized(context, "reps_unit")} × ${latestEntry.rounds} ${localized(context, "rounds_unit")}",
                     color = Color(0xFF8BC6A0),
                     fontSize = 13.sp
                 )
             } else {
                 Text(localized(context, "no_entries"), color = Muted, fontSize = 12.sp)
             }
+        }
+        }
+        if (trainedToday) {
+            CheckIcon(
+                Modifier
+                    .align(Alignment.TopEnd)
+                    .padding(8.dp)
+                    .size(22.dp)
+            )
         }
     }
 }
